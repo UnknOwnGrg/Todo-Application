@@ -42,11 +42,21 @@ def products():
     print(allTodo)
     return 'Show'
 
-@app.route('/update')
-def update():
-    allTodo = Todo.query.all()
-    print(allTodo)
-    return 'asdf'
+@app.route('/update/<int:sno>', methods=['GET','POST'])
+def update(sno):
+    if request.method == 'POST':
+        title = request.form['title']
+        desc = request.form['desc']
+        todo = Todo.query.filter_by(sno=sno).first()
+        todo.title = title # type: ignore
+        todo.desc = desc # type: ignore
+        db.session.add(todo)
+        db.session.commit()
+        return redirect('/')
+
+    todo = Todo.query.filter_by(sno=sno).first()
+    return render_template('update.html', todo=todo)
+
 
 
 # Delete Routes 
